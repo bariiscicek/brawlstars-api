@@ -1,6 +1,8 @@
 import requests
 class Player:
     def __init__(self,player_tag,token):
+        if player_tag[0]=='#':
+            player_tag=player_tag[1:]
         headers={
             'authorization':token,
         }
@@ -107,6 +109,8 @@ class Player:
         return Ver.json()['items']
 class Club():
     def __init__(self,club_tag,token):
+        if club_tag[0]=='#':
+            club_tag=club_tag[1:]
         headers={
             'authorization':token,
         }
