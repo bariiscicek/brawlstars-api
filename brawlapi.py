@@ -2,14 +2,13 @@ import requests
 class Player:
     def __init__(self,player_tag,token):
         headers={
-            'referer': 'https://developer.brawlstars.com/api-docs/index.html',
             'authorization':token,
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
         }
         Ver=requests.get('https://api.brawlstars.com/v1/players/%23'+player_tag,headers=headers)
         infos=Ver.json()
+        self.token=token
+        self.response=infos
         if Ver.status_code==200:
-            self.token=token
             self.tag=infos['tag']
             self.name=infos['name']
             self.trophies=infos['trophies']
@@ -97,16 +96,24 @@ class Player:
                 'Gain':gain
             },ignore_index=True)
         return df
-
+    def getResponse(self):
+        return self.respons
+    def getBattleLog(self):
+        headers={
+            'authorization':self.token,
+        }
+        url='https://api.brawlstars.com/v1/players/%23'+self.tag[1:]+'/battlelog'
+        Ver=requests.get(url,headers=headers)
+        return Ver.json()['items']
 class Club():
     def __init__(self,club_tag,token):
         headers={
-            'referer': 'https://developer.brawlstars.com/api-docs/index.html',
             'authorization':token,
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
         }
         Ver=requests.get('https://api.brawlstars.com/v1/clubs/%23'+club_tag,headers=headers)
         infos=Ver.json()
+        self.token=token
+        self.response=infos
         if Ver.status_code==200:
             self.tag=infos['tag']
             self.name=infos['name']
@@ -117,8 +124,63 @@ class Club():
             self.members=infos['members']
         else:
             print(infos['message'])
-    def getPlayerIDs(self):
-        l=[]
-        for i in self.members:
-            l.append(i['tag'][1:])
-        return l
+    def getPlayers(self):
+        return self.members
+    def getResponse(self):
+        return self.response
+def playerRanking(country,token):
+    headers={
+        'authorization':token,
+    }
+    Ver=requests.get('https://api.brawlstars.com/v1/rankings/'+country+'/players',headers=headers)
+    return Ver.json()['items']
+def clubRanking(country,token):
+    headers={
+        'authorization':token,
+    }
+    Ver=requests.get('https://api.brawlstars.com/v1/rankings/'+country+'/clubs',headers=headers)
+    return Ver.json()['items']
+def brawlerRanking(country,token,brawler):
+    brawlist={
+    'shelly':16000000,
+    'shelly':16000001,
+    'shelly':16000002,
+    'shelly':16000003,
+    'shelly':16000004,
+    'shelly':16000005,
+    'shelly':16000006,
+    'shelly':16000007,
+    'shelly':16000008,
+    'shelly':16000009,
+    'shelly':16000010,
+    'shelly':16000011,
+    'shelly':16000012,
+    'shelly':16000013,
+    'shelly':16000014,
+    'shelly':16000015,
+    'shelly':16000016,
+    'shelly':16000017,
+    'shelly':16000018,
+    'shelly':16000019,
+    'shelly':16000020,
+    'shelly':16000021,
+    'shelly':16000022,
+    'shelly':16000023,
+    'shelly':16000024,
+    'shelly':16000025,
+    'shelly':16000026,
+    'shelly':16000027,
+    'shelly':16000028,
+    'shelly':16000029,
+    'shelly':16000030,
+    'shelly':16000031,
+    'shelly':16000032,
+    'shelly':16000033,
+    'shelly':16000034
+    }
+    brawlid=brawlist[brawler]
+    headers={
+        'authorization':token,
+    }
+    Ver=requests.get('https://api.brawlstars.com/v1/rankings/'+country+'/brawlers/'+str(brawlid),headers=headers)
+    return Ver.json()['items']
